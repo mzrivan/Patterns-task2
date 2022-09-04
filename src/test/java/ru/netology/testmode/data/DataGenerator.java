@@ -11,6 +11,7 @@ import lombok.val;
 import java.util.Locale;
 
 import static io.restassured.RestAssured.given;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class DataGenerator {
     private static final RequestSpecification requestSpec = new RequestSpecBuilder()
@@ -26,10 +27,6 @@ public class DataGenerator {
     }
 
     private static void sendRequest(RegistrationDto user) {
-        // TODO: отправить запрос на указанный в требованиях path, передав в body запроса объект user
-        //  и не забудьте передать подготовленную спецификацию requestSpec.
-        //  Пример реализации метода показан в условии к задаче.
-        // сам запрос
         given() // "дано"
                 .spec(requestSpec) // указываем, какую спецификацию используем
                 .body(user) // передаём в теле объект, который будет преобразован в JSON
@@ -40,15 +37,11 @@ public class DataGenerator {
     }
 
     public static String getRandomLogin() {
-        // TODO: добавить логику для объявления переменной login и задания её значения, для генерации
-        //  случайного логина используйте faker
         val login = faker.name().username();
         return login;
     }
 
     public static String getRandomPassword() {
-        // TODO: добавить логику для объявления переменной password и задания её значения, для генерации
-        //  случайного пароля используйте faker
         val password = faker.internet().password();
         return password;
     }
@@ -58,32 +51,20 @@ public class DataGenerator {
         }
 
         public static RegistrationDto getUser(String status) {
-            // TODO: создать пользователя user используя методы getRandomLogin(), getRandomPassword() и параметр status
-            if (status == "active") {
-                return new RegistrationDto(
-                        getRandomLogin(),
-                        getRandomPassword(),
-                        status);
-            } else if (status == "blocked") {
-                return new RegistrationDto(
-                        getRandomLogin(),
-                        getRandomPassword(),
-                        status);
-            }
-            else {
-                throw new IllegalArgumentException("Недопустимый статус пользователя");
-            }
-
+            assertTrue(status.equals("active") || status.equals("blocked"));
+            return new RegistrationDto(
+                    getRandomLogin(),
+                    getRandomPassword(),
+                    status);
         }
 
         public static RegistrationDto getRegisteredUser(String status) {
-            // TODO: объявить переменную registeredUser и присвоить ей значение возвращённое getUser(status).
-            // Послать запрос на регистрацию пользователя с помощью вызова sendRequest(registeredUser)
             var registeredUser = getUser(status);
             sendRequest(registeredUser);
             return registeredUser;
         }
     }
+
     @Value
     public static class RegistrationDto {
         String login;
